@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Eloquent Emacs Configuration</title>
+<meta name="author" content="(Scott McLeod)"/>
+<meta name="description" content="A guide to configuring Emacs"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="reveal.js/css/reveal.css"/>
+<link rel="stylesheet" href="reveal.js/css/theme/moon.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Eloquent Emacs Configuration</h1>
+<h2>Scott McLeod</h2>
+<h2><a href="mailto:@deepresolve">@deepresolve</a></h2>
+<h2>2016-02-17 Wed 13:26</h2>
+</section>
+
+<section>
+<section id="slide-orgheadline1">
+<h2 id="orgheadline1">Why do I need a guide to configure Emacs?</h2>
+<p>
+Drawing on its Lisp heritage, the Emacs community rapidly meets the
+needs of its user base.  As the community evolves, better community
+developed solutions and core functionality obsolete prior ones.  While
+this provides users with a wealth of options, it also results in dated
+advice and the paradox of choice.  I will guide you in configuring
+Emacs from the ground up.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline2">
+<h2 id="orgheadline2">Some people think their system is important.  We know better.</h2>
+<blockquote nil>
+<p>
+I'm going to bring my Emacs with me &#x2013; Eric Caspary
+</p>
+</blockquote>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline3">
+<h2 id="orgheadline3">Bootstrapping the system</h2>
+<div class="org-src-container">
+
+<pre  class="src src-emacs-lisp"><span style="color: #586e75; font-style: italic;">;;; </span><span style="color: #268bd2;">package --- init.el</span>
+<span style="color: #586e75; font-style: italic;">;;; </span><span style="color: #268bd2;">Commentary:</span>
+<span style="color: #586e75; font-style: italic;">;;; </span><span style="color: #268bd2;">Code:</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">setq</span> message-log-max 10000<span style="color: #268bd2;">)</span> <span style="color: #586e75; font-style: italic;">; </span><span style="color: #586e75; font-style: italic;">debugging</span>
+
+<span style="color: #268bd2;">(</span><span style="color: #859900;">require</span> '<span style="color: #2aa198;">package</span><span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">setq</span> package-enable-at-startup nil<span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">setq</span> package-archives '<span style="color: #2aa198;">(</span><span style="color: #b58900;">(</span><span style="color: #2aa198;">"melpa-stable"</span> . <span style="color: #2aa198;">"https://stable.melpa.org/packages/"</span><span style="color: #b58900;">)</span>
+                         <span style="color: #b58900;">(</span><span style="color: #2aa198;">"gnu"</span> . <span style="color: #2aa198;">"https://elpa.gnu.org/packages/"</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span><span style="color: #268bd2;">)</span>
+
+<span style="color: #268bd2;">(</span><span style="color: #859900;">package-initialize</span><span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">setq</span> quelpa-update-melpa-p nil<span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">unless</span> <span style="color: #2aa198;">(</span><span style="color: #859900;">require</span> '<span style="color: #2aa198;">quelpa</span> nil t<span style="color: #2aa198;">)</span>
+  <span style="color: #2aa198;">(</span><span style="color: #859900;">with-temp-buffer</span>
+    <span style="color: #b58900;">(</span><span style="color: #859900;">url-insert-file-contents</span> <span style="color: #2aa198;">"https://raw.github.com/quelpa/quelpa/master/bootstrap.el"</span><span style="color: #b58900;">)</span>
+    <span style="color: #b58900;">(</span><span style="color: #859900;">eval-buffer</span><span style="color: #b58900;">)</span><span style="color: #2aa198;">)</span><span style="color: #268bd2;">)</span>
+
+<span style="color: #586e75; font-style: italic;">;; </span><span style="color: #586e75; font-style: italic;">install use-package and the quelpa handler</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">quelpa</span> '<span style="color: #2aa198;">(</span><span style="color: #859900;">use-package</span> <span style="color: #2aa198;">:fetcher</span> github <span style="color: #859900;">:repo</span> <span style="color: #2aa198;">"jwiegley/use-package"</span> <span style="color: #859900;">:stable</span> t<span style="color: #2aa198;">)</span><span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">quelpa</span> '<span style="color: #2aa198;">(</span><span style="color: #859900;">quelpa-use-package</span> <span style="color: #859900;">:fetcher</span> github <span style="color: #859900;">:repo</span> <span style="color: #2aa198;">"quelpa/quelpa-use-package"</span><span style="color: #2aa198;">)</span><span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">require</span> '<span style="color: #2aa198;">quelpa-use-package</span><span style="color: #268bd2;">)</span>
+
+<span style="color: #268bd2;">(</span><span style="color: #859900;">setq</span> use-package-always-ensure t<span style="color: #268bd2;">)</span>
+<span style="color: #268bd2;">(</span><span style="color: #859900;">quelpa-use-package-activate-advice</span><span style="color: #268bd2;">)</span>
+</pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+<script src="reveal.js/lib/js/head.min.js"></script>
+<script src="reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
